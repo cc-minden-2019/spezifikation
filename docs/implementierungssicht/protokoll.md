@@ -1,19 +1,18 @@
-# Protokoll
+# Protokoll [Version 1]
 
 ## Events
 
-Format: JSON
-
 ```json
 {
+	"version": number,
 	"id": "uuid",
+	"src": "str", // ORDER, STOCK, KITCHEN, TRACKING, DELIVERY, SERVING, PAYMENT
 	"type": {
 		"context": "str", // ORDER, DISH
 		"event": "str"
-			// ORDER: PLACED, COMPLETED, IN_DELIVERY, DELIVERED, DELIVERY_FAILED, PICKED_UP, PAYMENT_COMPLETED
+			// ORDER: PLACED, IN_PROGRESS, FINISHED, IN_DELIVERY, DELIVERED, DELIVERY_FAILED, PICKED_UP, PAYMENT_COMPLETED
 			// DISH: IN_PROGRESS, FINISHED, IN_SERVING, SERVED
 	},
-	"src": "str", // ORDER, STOCK, KITCHEN, TRACKING, DELIVERY, SERVING, PAYMENT
 	"object": "uuid",
 	"payload": { }
 }
@@ -35,7 +34,7 @@ Format: JSON
 		}
 	],
 	"customer": {
-		"uuid": "str",
+		"id": "uuid",
 		"last_name"?: "str",
 		"first_name"?: "str"
 	},
@@ -80,7 +79,28 @@ Format: JSON
 }
 ```
 
-## RPC
+## Errors
+
+```json
+{
+	"version": number,
+	"id": "uuid",
+	"src": "str",
+	"error": {
+		"errno": number,
+		"message": "str"
+	},
+	"event": "uuid"
+}
+```
+
+### Error-Codes
+
+TODO
+
+---
+
+# RPC
 
 Abrufen der Lager-Menge einer Zutat:
 ```
