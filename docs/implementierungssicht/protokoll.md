@@ -94,10 +94,6 @@
 }
 ```
 
-### Error-Codes
-
-TODO
-
 ---
 
 # RPC
@@ -110,4 +106,133 @@ StockService.getAmountInStock(ingredientId: number): number
 Abrufen der nötigen Zutaten für ein Gericht:
 ```
 MenuService.getIngredientsForDish(dishId: number): [{ ingredientId: number, amount: number }]
+```
+
+StorageAmount.proto
+```proto
+syntax = "proto3";
+
+service StorageAmount {
+    rpc GetAmountInStock (IngredientId) returns (Amount);
+}
+
+message IngredientId {
+    string  ingredientId = 1;
+}
+
+message Amount {
+    int32 amount = 1;
+}
+```
+
+---
+
+# REST
+
+### Bestell-Service
+
+**POST /order**
+
+consumes:
+```
+<order-placed-payload>
+```
+
+returns: id of placed order
+```
+{
+  "id": "7514eb16-836c-4736-be9e-a9e47531dad2"
+}
+```
+
+### Tracking-Service
+
+**GET /order?id=[id]**
+
+returns: current state of order
+```json
+{
+	<order-placed-payload>
+	"events": [ { <event> } ],
+	"stages": [ { "stage": "PLACED", "entered": "datetime" } ],
+	"dishes": [
+		{
+			<dish>,
+			"events": [ { <event> } ],
+			"stages": [ { "stage": "IN_PROGRESS", "entered": "datetime" } ]
+		}
+	]
+}
+```
+
+#### Websocket
+
+**/order/subscribe?order=[id]**
+
+Emits: "event"
+
+### Storage-Service
+
+Ingredient:
+```json
+{
+    "id": "5e31d8e6c3971b00017db519",
+    "category": "Gemüse",
+    "name": "Birne",
+    "amount": 32,
+    "reseverations": 0,
+    "unit": "Stück"
+}
+```
+
+**GET /api/storage/getingredient/:oid**
+
+consumes: oid -> Ingredient Id
+
+returns: ingredient
+```json
+<ingredient>
+```
+
+**GET /api/storage/getingredients**
+
+returns: list of ingredients
+```json
+{
+    [
+        { <ingredient> }
+    ]
+}
+```
+
+**PUT /api/storage/putingredient**
+
+Neu erstellen:
+
+consumes: ingredient
+```json
+<ingredient> (ohne id)
+```
+returns: ingredient
+```json
+<ingredient>
+```
+
+Bestehendes editieren:
+
+consumes: ingredient
+```json
+<ingredient>
+```
+returns: 200, wenn erfolgreich editiert
+
+**DELETE /api/storage/deleteingredient**
+
+consumes: ingredient
+```json
+<ingredient>
+```
+returns: ingredient
+```json
+<ingredient>
 ```
